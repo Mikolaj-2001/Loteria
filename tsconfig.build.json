@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",// Bazowy plik konfiguracyjny TypeScript
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],// Wyklucza pliki i foldery z kompilacji
+}
