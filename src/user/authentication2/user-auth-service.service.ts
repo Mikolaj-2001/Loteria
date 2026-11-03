@@ -60,8 +60,8 @@ export class UserAuthServiceService {
     };
 
     const token = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_TOKEN'),
-      expiresIn: this.configService.get<string>('JWT_TOKEN_EXPIRES_IN') || '1h',
+      secret: this.configService.get('JWT_TOKEN'),
+      expiresIn: this.configService.get('JWT_TOKEN_EXPIRES_IN') || '1h',
     });
 
     res.cookie('jwt', token, {

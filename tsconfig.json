@@ -9,6 +9,7 @@
     "allowJs": true,
     "checkJs": false,
     "target": "ES2024",
+    "types": ["node", "jest"],
     "sourceMap": true,
     "outDir": "./dist",
     "ignoreDeprecations": "5.0",

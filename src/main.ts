@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
@@ -62,6 +63,11 @@ async function bootstrap() {
 
   app.use('/user/login', loginLimitation); // Ograniczenie liczby prób logowania
 
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // Usuwa nieznane właściwości z obiektów
+    forbidNonWhitelisted: true, // Rzuca błąd, jeśli pojawią się nieznane właściwości
+    transform: true, // Automatycznie transformuje typy danych
+  })); // Dodanie globalnego walidatora
   await app.listen(process.env.APP_PORT ?? 3000);
   console.log('Program działą na porcie:', process.env.APP_PORT ?? 3000);
 }

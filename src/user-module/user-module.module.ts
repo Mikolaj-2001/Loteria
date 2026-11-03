@@ -24,9 +24,9 @@ import { FileConfiguring } from 'src/user-service/user-fileCreation.service';
     forwardRef(() => ActionModuleModule), // Użyj forwardRef żeby uniknąć cyklicznej zależności
     JwtModule.registerAsync({
       useFactory: /* Wstrzykuje zależność */ (cfg: ConfigService) => ({
-        secret: cfg.get<string>('JWT_TOKEN'),
+        secret: cfg.get('JWT_TOKEN'),
         signOptions: {
-          expiresIn: cfg.get<string>('JWT_TOKEN_EXPIRES_IN') || '1h',
+          expiresIn: cfg.get('JWT_TOKEN_EXPIRES_IN') || '1h',
         },
       }),
       inject: [

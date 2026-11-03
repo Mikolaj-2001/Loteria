@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as CryptoJS from 'crypto-js';
+import crypto from 'node:crypto';
+import bcrypt from 'bcrypt';
 import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
 
 @Schema({ timestamps: true })
@@ -50,14 +51,15 @@ UserSchema.pre('save', async function (next) {
     const randomEncryptingKey = randomSequenceOfSymbols(randomNumber(12, 14));
 
     // Szyfruj prawdziwe dane użytkownika z losowym kluczem
-    const encryptedPassword = CryptoJS.AES.encrypt(
-      this.password,
-      randomEncryptingKey,
-    ).toString();
-    const encryptedEmail = CryptoJS.AES.encrypt(
-      this.email,
-      randomEncryptingKey,
-    ).toString();
+    const cipher = crypto.createCipheriv(
+      'aes-256-cbc',
+      Buffer.from(randomEncryptingKey, 'utf-8'),
+      Buffer.alloc(16, 0),
+    );
+    const encryptedPassword = Buffer.concat([cipher.update(this.password, 'utf-8'), cipher.final()]).toString('hex');
+    const encryptedEmail = crypto.createHash('sha256')
+      .update(this.email + randomEncryptingKey)
+      .digest('hex');
 
     this.password = encryptedPassword;
     this.email = encryptedEmail;
@@ -84,13 +86,13 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.methods.getDecryptedEmail = function () {
-  return CryptoJS.AES.decrypt(this.email, this.encryptionKey).toString(
-    CryptoJS.enc.Utf8,
-  );
+  return crypto.createDecipheriv(
+    'aes-256-cbc',
+    Buffer.from(this.encryptionKey, 'utf-8'),
+    Buffer.alloc(16, 0),
+  ).update(Buffer.from(this.email, 'hex')).toString('utf-8');
 };
 
 UserSchema.methods.getDecryptedPassword = function () {
-  return CryptoJS.AES.decrypt(this.password, this.encryptionKey).toString(
-    CryptoJS.enc.Utf8,
-  );
+  return bcrypt.compareSync(this.password, this.encryptionKey);
 };

@@ -69,7 +69,7 @@ export class UserServiceService {
   }
 
   async findById(userId: string): Promise<User | null> {
-    return this.userModel.findById(userId).lean().exec();
+    return this.userModel.findById(userId).exec();
   }//findById zwraca użytkownika na podstawie jego ID lub null, jeśli nie znaleziono
 
   async findByEmail(email: string): Promise<User | null> {
